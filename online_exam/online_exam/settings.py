@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,7 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'examapp.apps.ExamappConfig',
+    'examapp',
+
 ]
+
+# This way we are telling Django to use our custom model instead the default one.
+# AUTH_USER_MODEL = "exmpapp.User"
+AUTH_USER_MODEL = "examapp.User"
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
