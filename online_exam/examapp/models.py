@@ -12,12 +12,22 @@ ACADEMY = (
     ('art', '艺术学院'),
 )
 
+# 题目难度
+LEVEL = {
+    ('level1', 'easy'),
+    ('level2', 'general'),
+    ('level3', 'difficult'),
+}
+
 
 # 用户
 class User(AbstractUser):
     """
     用户类模型
     """
+    # student.username -----> 学号
+    # teacher.username -----> 教职工号
+    # admin.username   -----> 管理员账号
     username = models.CharField(max_length=30, verbose_name="学号", primary_key=True)  # 这里就是创建超级用户的唯一凭证
 
     real_name = models.CharField(max_length=30, verbose_name="姓名")
@@ -32,67 +42,66 @@ class User(AbstractUser):
         return self.username
 
     class Meta:
-        verbose_name_plural = '用户'    # 在管理界面中表的名字
-        ordering = ['class_name']       # 在管理界面按照班级名称排序
+        verbose_name_plural = '用户'  # 在管理界面中表的名字
+        ordering = ['class_name']  # 在管理界面按照班级名称排序
 
 
-# 与student相关的model
-# class Student(models.Model):
-#     # 除了需要将模型类作为第一个参数的，verbose_name关键词可省略
-#     id      = models.IntegerField(primary_key=True, verbose_name='学号')
-#     name    = models.CharField(max_length=20)
-#     sex     = models.CharField(max_length=10, choices=SEX)
-#     academy = models.CharField(max_length=30, choices=ACADEMY)
-#     major   = models.CharField(max_length=20)
-#     pw      = models.CharField(max_length=20, verbose_name='密码')
-
-class Grade(models.Model):
-    # 学生作为成绩的外键
-    # student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=20, verbose_name='科目')
-    grade   = models.IntegerField()
-
-
-# 与老师相关的model
-# class Teacher(models.Model):
-#     id      = models.IntegerField(primary_key=True, verbose_name='教职工号')
-#     name    = models.CharField(max_length=20)
-#     sex     = models.CharField(max_length=10, choices=SEX)
-#     academy = models.CharField(max_length=30, choices=ACADEMY)
-#     major   = models.CharField(max_length=20)
-#     pw      = models.CharField(max_length=20, verbose_name='密码')
-
-
-# 与试题相关的model
-class Problem(models.Model):
+# 三种题型：单项选择题、填空题、判断题
+class ChoiceQuestion(models.Model):
     ANSWER = (
         ('optionA', 'A'),
         ('optionB', 'B'),
         ('optionC', 'C'),
         ('optionD', 'D'),
     )
-    LEVEL = {
-        ('level1', 'easy'),
-        ('level2', 'general'),
-        ('level3', 'difficult'),
-    }
     # id = models.AutoField(primary_key=True) 自动加入
     subject = models.CharField(max_length=20, verbose_name='科目')
-    title   = models.TextField(verbose_name='题目描述')
-    optionA = models.TextField('A选项', max_length=30)
-    # optionA  = models.TextField('A选项')
-    optionB = models.TextField('B选项', max_length=30)
-    optionC = models.TextField('C选项', max_length=30)
-    optionD = models.TextField('D选项', max_length=30)
-    answer  = models.CharField('答案', max_length=10, choices=ANSWER)
-    level   = models.CharField('等级', max_length=10, choices=LEVEL)
-    score   = models.IntegerField('分数', default=1)
+    title = models.TextField(verbose_name='题目描述')
+    answer = models.CharField(max_length=10, choices=ANSWER, verbose_name='答案')
+    level = models.CharField(max_length=10, choices=LEVEL, verbose_name='题目难度')
+    score = models.IntegerField(verbose_name='该题分数', default=1)
+
+    optionA = models.TextField(max_length=30, verbose_name='A选项')
+    optionB = models.TextField(max_length=30, verbose_name='B选项')
+    optionC = models.TextField(max_length=30, verbose_name='C选项')
+    optionD = models.TextField(max_length=30, verbose_name='D选项')
+
+
+class FillBlankQuestion(models.Model):
+    subject = models.CharField(max_length=20, verbose_name='科目')
+    title = models.TextField(verbose_name='题目描述')
+    answer = models.CharField(max_length=200, verbose_name='答案')
+    level = models.CharField(max_length=10, choices=LEVEL, verbose_name='题目难度')
+    score = models.IntegerField(verbose_name='该题分数', default=2)
+
+
+class JudgeQuestion(models.Model):
+    ANSWER = (
+        ('T', 'True'),
+        ('F', 'False'),
+    )
+    subject = models.CharField(max_length=20, verbose_name='科目')
+    title = models.TextField(verbose_name='题目描述')
+    answer = models.CharField(max_length=20, choices=ANSWER)
+    level = models.CharField(max_length=10, choices=LEVEL, verbose_name='题目难度')
+    score = models.IntegerField(verbose_name='该题分数', default=1)
+
 
 class Paper(models.Model):
     # 与题库为多对多关系
-    problem         = models.ManyToManyField(Problem)
-    # teacher         = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    subject         = models.CharField(max_length=20)
-    major           = models.CharField(max_length=20, verbose_name='适用专业')
+    choice_q = models.ManyToManyField(ChoiceQuestion)
+    fill_blank_q = models.ManyToManyField(FillBlankQuestion)
+    judge_q = models.ManyToManyField(JudgeQuestion)
+    # User作为外键
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=20, verbose_name='考试科目', default='Python')
+    academy = models.CharField(max_length=20, verbose_name='适用学院', default='cs')
     exam_start_time = models.DateTimeField()
-    exam_stop_time  = models.DateTimeField()
+    exam_stop_time = models.DateTimeField()
+
+
+class Grade(models.Model):
+    # 学生作为成绩的外键
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=20, verbose_name='科目')
+    grade = models.IntegerField()

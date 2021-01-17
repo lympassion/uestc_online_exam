@@ -65,6 +65,46 @@
        ```
 
      * ……
+   
+4. 登陆的时候可能会出现如下错误：
+
+   * ![image-20210117220104314](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210117220104314.png)
+
+   * 返回去看登录模板
+
+     * ```html
+       <form action="{% url 'examapp:login' %}" method="post">
+           {% csrf_token %}
+           <div class="login-field">
+               <input type="text" name="" required=""/>
+               <label>Username</label>
+           </div>
+           <div class="login-field">
+               <input type="password" name="" required=""/>
+               <label>Password</label>
+           </div>
+           <button type="submit">Submit</button>
+       </form>
+       ```
+
+   * 应该修改为
+
+     * ```html
+       <form action="{% url 'examapp:login' %}" method="post">
+           {% csrf_token %}
+           <div class="login-field">
+               <input type="text" name="username" required=""/>
+               <label>Username</label>
+           </div>
+           <div class="login-field">
+               <input type="password" name="password" required=""/>
+               <label>Password</label>
+           </div>
+           <button type="submit">Submit</button>
+       </form>
+       ```
+
+5. 
 
 
 

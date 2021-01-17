@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
-
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="en">
     <title></title>
     <link rel="stylesheet" type="text/css" href="{% static 'login/login.css' %}"/>
 
@@ -12,6 +11,9 @@
 
 <div class="login-box">
     <h2>Login</h2>
+    <div class="login_name">
+        <p>数据库考试平台登录</p>
+    </div>
     <form action="{% url 'examapp:login' %}" method="post">
         {% csrf_token %}
         <div class="login-field">
@@ -25,6 +27,11 @@
         <button type="submit">Submit</button>
     </form>
 </div>
+
+<!--Footer-->
+<footer class="footer_third">
+    <div class="copyright">© 电子科技大学™</div>
+</footer>
 
 
 </body>
