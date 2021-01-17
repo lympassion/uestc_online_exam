@@ -11,15 +11,18 @@ def user_login(request):
     """
     用户登陆页面
     """
-    username = request.POST.get("username")
-    password = request.POST.get("password")
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        if not user.is_teacher:
-            return redirect('ExamApp:学生主页', username=user.username)
+    if request.method == 'POST':
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            if not user.is_teacher:
+                return redirect('ExamApp:学生主页', username=user.username)
+            else:
+                return redirect('ExamApp:老师主页', username=user.username, class_name='all')
         else:
-            return redirect('ExamApp:老师主页', username=user.username, class_name='all')
+            # 是在这里调用的登录模板
+            return render(request, 'login.html', {'error': '密码错误'})
     else:
-        # 是在这里调用的登录模板
-        return render(request, 'login.html', {'error': '密码错误'})
+        return render(request, 'login.html')

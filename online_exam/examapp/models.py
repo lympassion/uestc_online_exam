@@ -18,10 +18,13 @@ class User(AbstractUser):
     """
     用户类模型
     """
-    uid = models.AutoField(primary_key=True, verbose_name="用户编号")
+    username = models.CharField(max_length=30, verbose_name="学号", primary_key=True)  # 这里就是创建超级用户的唯一凭证
+
     real_name = models.CharField(max_length=30, verbose_name="姓名")
+    sex = models.CharField('性别', max_length=10, choices=SEX, default='男')
+    academy = models.CharField('学院', max_length=20, choices=ACADEMY, default=None, null=True)  # null=True,负责创建用户不成功
     is_teacher = models.BooleanField(verbose_name="是否为老师", default=False)
-    username = models.CharField(max_length=30, verbose_name="学号", unique=True)  # 这里就是创建超级用户的唯一凭证
+
     class_name = models.CharField(max_length=50, verbose_name="班级", blank=True, default='未知')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
