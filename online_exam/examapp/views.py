@@ -21,8 +21,11 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST["username"]
         password = request.POST["password"]
+        print(username, password)
+        # user = get_object_or_404(models.User, username=username, is_teacher=False)
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            print('user 有')
             login(request, user)
             # return redirect('examapp:home', username = user.username)
             if user.is_teacher:
@@ -43,7 +46,7 @@ def stu_home(request, username):
     # 通过学号获取该学生实体
     # student = models.Student.objects.get(username=username)
     student = get_object_or_404(models.User, username=username, is_teacher=False)
-    # 查询考试信息
+    # 查询考试信息，根据学生所在学院查询要考的试题
     paper = models.Paper.objects.filter(academy=student.academy)
     # 查询成绩信息
     grade = models.Grade.objects.filter(student=student.username)
@@ -64,7 +67,73 @@ def teacher_home(request, username):
 
     context = {
         'teacher': teacher,
-        'paper':   paper,
+        'paper': paper,
     }
 
     return render(request, 'teacherHome.html', context)
+
+
+# 学生考试 的视图函数
+def startExam(request):
+    username = request.GET.get('sid')
+    paper_id = request.GET.get('pid')
+    subject = request.GET.get('subject')
+
+    student = get_object_or_404(models.User, username=username, is_teacher=False)
+    # 确保学生唯一的一张考试试题
+    paper = get_object_or_404(models.Paper, id=paper_id)
+
+    context = {
+        'student': student,
+        'paper': paper,
+        'subject': subject,
+    }
+
+    return render(request, 'exam.html', context)
+
+
+# 计算由exam.html模版传过来的数据计算成绩
+def calculate_score(request):
+    if request.method == 'POST':
+        sid      = request.POST['sid']
+        pid      = request.POST['pid']
+        subject1 = request.POST['subject']
+
+        # 重新生成Student实例，Paper实例，Grade实例，名字和index中for的一致，可重复渲染
+        student = models.Student.objects.get(username=sid)
+        paper   = models.Paper.objects.filter(id=pid)
+        grade   = models.Grade.objects.filter(sid=student.username)
+
+        mygrade = 0  # 初始化一个成绩为0
+        # 选择题成绩
+        # 其中models.Paper.objects.filter(id=pid).values('choice_q') 得到对应的选择题
+        choice_q =models.Paper.objects.filter(id=pid).values('choice_q').values('choice_q__id', 'choice_q__answer',
+                                                                                'choice_q__score')
+        for q in choice_q:
+            qId = str(q['choice_q__id'])  # int 转 string,通过choice_q找到题号
+            myans = request.POST['qId']  # 通过 qid 得到学生关于该题的作答
+            # print(myans)
+            okans = q['choice_q__answer']  # 得到正确答案
+            # print(okans)
+            if myans == okans:  # 判断学生作答与正确答案是否一致
+                mygrade += q['choice_q__score']  # 若一致,得到该题的分数,累加mygrade变量
+
+        # 判断题成绩
+        judge_q = models.Paper.objects.filter(id=pid).values('judge_q').values('judge_q__id',
+                                                                                 'judge_q__answer',
+                                                                                 'judge_q__score')
+        for q in judge_q:
+            qId = str(q['choice_q__id'])  # int 转 string,通过choice_q找到题号
+            myans = request.POST['qId']  # 通过 qid 得到学生关于该题的作答
+            # print(myans)
+            okans = q['choice_q__answer']  # 得到正确答案
+            # print(okans)
+            if myans == okans:  # 判断学生作答与正确答案是否一致
+                mygrade += q['choice_q__score']  # 若一致,得到该题的分数,累加mygrade变量
+
+
+        # 向Grade表中插入数据
+        models.Grade.objects.create(sid_id=sid, subject=subject1, grade=mygrade)
+        # print(mygrade)
+        # 重新渲染index.html模板
+        return render(request, 'index.html', {'student': student, 'paper': paper, 'grade': grade})
