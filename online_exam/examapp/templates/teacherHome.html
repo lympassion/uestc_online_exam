@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="../static/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/home/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- 必须在引入bootstarp.js之前引入 -->
-    <script src="../static/jquery-3.3.1.min.js"></script>
+    <script src="../static/home/jquery-3.3.1.min.js"></script>
 
-    <script src="../static/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+    <script src="../static/home/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
-    <script src="../static/js/echarts.min.js"></script>
+    <script src="../static/home/js/echarts.min.js"></script>
     <title>教师页面</title>
 </head>
 <body>
@@ -47,7 +47,8 @@
             <a class="nav-link" data-toggle="pill" href="#menu2">成绩查询</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/admin/student/paper/add/">组卷</a>
+<!--            组卷链接是根据后台组卷的链接来的-->
+            <a class="nav-link" href="/admin/examapp/paper/add/">组卷</a>
         </li>
     </ul>
 
@@ -60,29 +61,25 @@
                 <tr>
                     <th>属性</th>
                     <th>信息</th>
-
                 </tr>
                 </thead>
+
                 <tbody>
-                <tr>
+                <tr class="table-primary">
                     <td>教工号</td>
                     <td>{{ teacher.username }}</td>
-
                 </tr>
-                <tr class="table-primary">
+                <tr class="table-secondary">
                     <td>姓名</td>
                     <td>{{ teacher.real_name }}</td>
-
                 </tr>
                 <tr class="table-success">
                     <td>性别</td>
                     <td>{{ teacher.sex }}</td>
-
                 </tr>
                 <tr class="table-danger">
                     <td>学院</td>
                     <td>{{ teacher.academy }}</td>
-
                 </tr>
 
                 </tbody>

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from . import views
 
@@ -9,4 +9,6 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('stuHome/<username>', views.stu_home, name='stuHome'),
     path('teacherHome/<username>', views.teacher_home, name='teacherHome'),
+    re_path(r'^calculateScore/$', views.calculate_score, name='calculateScore'),
+    re_path(r'^exam/$', views.startExam, name='exam'),
 ]

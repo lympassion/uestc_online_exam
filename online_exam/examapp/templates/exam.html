@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>在线答题考试系统</title>
+
+    <link href="../static/home/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 必须在引入bootstarp.js之前引入 -->
+    <script src="../static/home/jquery-3.3.1.min.js"></script>
+
+    <script src="../static/home/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+
+    <script src="../static/home/js/jquery-1.11.3.min.js"></script>
+    <script src="../static/home/js/jquery.countdown.js"></script>
+    <!--时间js-->
+    <link href="../static/home/css/main.css" rel="stylesheet" type="text/css"/>
+
+    <link href="../static/home/css/test.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .hasBeenAnswer {
+            background: #5d9cec;
+            color: #fff;
+        }
+    </style>
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-sm bg-light navbar-light ">
+    <ul class="navbar-nav">
+        <li class="nav-item active">
+            <a class="nav-link"><h3>在线考试系统</h3></a>
+        </li>
+
+        <li class="nav-item active">
+            <a class="nav-link"><h3>当前科目:{{ subject }}</h3></a>
+        </li>
+        <li style="position: fixed;right: 70px; font-size: 30px;color: #9fcdff">{{ student.real_name }}</li>
+
+    </ul>
+</nav>
+
+<div class="main">
+    <!--nr start-->
+    <div class="test_main">
+        <div class="nr_left">
+            <div class="test">
+                <form action="{% url 'examapp:calculateScore' %}" method="post">
+                    <input type="hidden" name="sid" value="{{ student.username }}">
+                    <input type="hidden" name="pid" value="{{ paper.id }}">
+                    <input type="hidden" name="subject" value="{{ subject }}">
+                    <div class="test_title">
+                        <font><input type="submit" name="submit_paper" value="交卷"></font>
+                    </div>
+
+
+                    <!--选择题-->
+                    <div class="choice_content">
+                        <div class="choice_content_title">
+                            <h2>单选题</h2>
+                        </div>
+                    </div>
+                    <div class="choice_content_nr">
+                        <ul>
+                            {% for choice in paper.choice_q.all %}
+                            <li id="choice {{ forloop.counter }}">
+                                <div class="choice_content_nr_tt">
+                                    <i>{{ forloop.counter}}</i><span> ({{ choice.score }} 分)</span>
+                                    <font>{{ choice.title }}</font>
+
+                                </div>
+                                <div class="choice_content_nr_main">
+                                    <ul>
+                                        <li class="option">
+                                            <input type="radio" class="radioOrCheck" name="choice {{ choice.id }}"
+                                                   value="A"/>
+                                            <label>A.
+                                                <p class="ue" style="display: inline;">{{ choice.optionA }}</p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+                                            <input type="radio" class="radioOrCheck" name="choice {{ choice.id }}"
+                                                   value="B"/>
+                                            <label>
+                                                B.<p class="ue" style="display: inline;">{{ choice.optionB }}</p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+                                            <input type="radio" class="radioOrCheck" name="choice {{ choice.id }}"
+                                                   value="C"/>
+                                            <label>
+                                                C.<p class="ue" style="display: inline;">{{ choice.optionC }}</p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+                                            <input type="radio" class="radioOrCheck" name="choice {{ choice.id }}"
+                                                   value="D"/>
+                                            <label>
+                                                D.<p class="ue" style="display: inline;">{{ choice.optionD }}</p>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+                    <!--判断题-->
+                    <div class="judge_content">
+                        <div class="judge_content_title">
+                            <h2>判断题</h2>
+                        </div>
+                    </div>
+                    <div class="judge_content_nr">
+                        <ul>
+                            {% for judge in paper.judge_q.all %}
+                            <li id="judge {{ forloop.counter }}">
+                                <div class="judge_content_nr_tt">
+                                    <i>{{ forloop.counter}}</i><span> ({{ judge.score }} 分)</span>
+                                    <font>{{ judge.title }}</font>
+
+                                </div>
+                            <li class="option">
+                                <input type="radio" class="radioOrCheck" name="judge {{ judge.id }}"
+                                       value="A"/>
+                                <label>
+                                    正确<p class="ue" style="display: inline;">{{ choice.optionA }}</p>
+                                </label>
+                            </li>
+
+                            <li class="option">
+                                <input type="radio" class="radioOrCheck" name="judge {{ judge.id }}"
+                                       value="B"/>
+                                <label>
+                                    错误<p class="ue" style="display: inline;">{{ choice.optionB }}</p>
+                                </label>
+                            </li>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <div class="foot"></div>
+</div>
+
+
+</body>
+</html>

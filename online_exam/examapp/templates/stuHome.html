@@ -85,6 +85,10 @@
                     <td>{{ student.academy }}</td>
 
                 </tr>
+                <tr class="table-active">
+                    <td>班级</td>
+                    <td>{{ student.class_name }}</td>
+                </tr>
 
                 </tbody>
             </table>
@@ -96,10 +100,10 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>学号</th>
                     <th>姓名</th>
                     <th>考试科目</th>
-                    <th>考试时间</th>
+                    <th>考试开始时间</th>
+                    <th>考试结束时间</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -108,12 +112,12 @@
                 {% for paper1 in paper %}
 
                 <tr class="table-info">
-                    <td>{{ student.username }}</td>
                     <td>{{ student.real_name }}</td>
-                    <td>{{ paper1.subject }}{{ paper2.subject }}</td>
-                    <td>{{ paper1.examtime }} {{ paper2.examtime }}</td>
+                    <td>{{ paper1.subject }}</td>
+                    <td>{{ paper1.exam_start_time }} {{ paper2.examtime }}</td>
+                    <td>{{ paper1.exam_stop_time }}</td>
                     <td>
-                        <a href="/startExam/?sid={{ student.username }}&subject={{ paper1.subject }}">
+                        <a href="/exam/?sid={{ student.username }}&pid={{ paper1.id }}&subject={{ paper1.subject }}">
                             <button class="btn btn-primary" id="toExam+{{ paper1.subject }}">开始考试</button>
                         </a>
                     </td>
@@ -154,7 +158,6 @@
         </div>
     </div>
 </div>
-
 
 
 </body>

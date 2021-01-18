@@ -6,6 +6,26 @@
 
 
 
+### 自己的
+
+
+
+![image-20210118170346743](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118170346743.png)
+
+![image-20210118170405697](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118170405697.png)
+
+
+
+![image-20210118170420582](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118170420582.png)
+
+![image-20210118175411420](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118175411420.png)
+
+
+
+### 参考的
+
+![image-20210118175520765](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118175520765.png)
+
 
 
 
@@ -104,7 +124,40 @@
        </form>
        ```
 
-5. 
+5. 在学生进入考试界面的时候，出现了这样的问题，`exam.html`拿不到paper的信息。
+
+   * 向`exam.html`传递paper的信息方式如下：
+
+     * ```python
+       paper = models.Paper.objects.filter(id=paper_id)  # 这样得不到
+           if paper.exists():
+               print('count:', paper.count())
+       
+           # 确保学生唯一的一张考试试题
+           # paper    = get_object_or_404(models.Paper, id=paper_id)
+       
+           context = {
+               'student': student,
+               'paper': paper,
+               'subject': subject,
+           }
+       
+           return render(request, 'exam.html', context)
+       ```
+
+   * 但是界面上却没有
+
+     * ![image-20210119003054317](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210119003054317.png)
+
+   * 最后才发现问题是`paper = models.Paper.objects.filter(id=paper_id)`，这是一个集合，但我在`exam.html`中却直接用的是paper，把它当作元素用了。
+
+   * ```html
+     {% for choice in paper.choice_q.all %}
+     ```
+
+   * 所以要么在`exam.html`中遍历集合，要么采用`paper    = get_object_or_404(models.Paper, id=paper_id)`，我选择了后者，因为答题者一次只能答一份试卷。
+
+   
 
 
 
