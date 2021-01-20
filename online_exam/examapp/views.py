@@ -21,11 +21,11 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST["username"]
         password = request.POST["password"]
-        print(username, password)
+        # print(username, password)
         # user = get_object_or_404(models.User, username=username, is_teacher=False)
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            print('user 有')
+            # print('user 有')
             login(request, user)
             # return redirect('examapp:home', username = user.username)
             if user.is_teacher:
@@ -97,43 +97,45 @@ def calculate_score(request):
     if request.method == 'POST':
         sid      = request.POST['sid']
         pid      = request.POST['pid']
-        subject1 = request.POST['subject']
+        subject = request.POST['subject']
 
         # 重新生成Student实例，Paper实例，Grade实例，名字和index中for的一致，可重复渲染
-        student = models.Student.objects.get(username=sid)
+        student = models.User.objects.get(username=sid)
         paper   = models.Paper.objects.filter(id=pid)
-        grade   = models.Grade.objects.filter(sid=student.username)
+        grade   = models.Grade.objects.filter(student=student.username)
 
-        mygrade = 0  # 初始化一个成绩为0
+        mygrade  = 0  # 初始化一个成绩为0
+
         # 选择题成绩
-        # 其中models.Paper.objects.filter(id=pid).values('choice_q') 得到对应的选择题
-        choice_q =models.Paper.objects.filter(id=pid).values('choice_q').values('choice_q__id', 'choice_q__answer',
+        # 其中models.Paper.objects.filter(id=pid).values('choice_q')，返回id=pid的试卷中所有的选择题(集合，可迭代)
+        choice_q = models.Paper.objects.filter(id=pid).values('choice_q').values('choice_q__id', 'choice_q__answer',
                                                                                 'choice_q__score')
         for q in choice_q:
-            qId = str(q['choice_q__id'])  # int 转 string,通过choice_q找到题号
-            myans = request.POST['qId']  # 通过 qid 得到学生关于该题的作答
-            # print(myans)
+            qid = 'choice' + str(q['choice_q__id'])  # 这里一定要与exam.html中对应的name一致
+            myans = request.POST[qid]  # 通过 qid 得到学生关于该题的作答
+            # print('myans', myans)
             okans = q['choice_q__answer']  # 得到正确答案
-            # print(okans)
+            # print('okans', okans)
             if myans == okans:  # 判断学生作答与正确答案是否一致
                 mygrade += q['choice_q__score']  # 若一致,得到该题的分数,累加mygrade变量
+            print('mygrade', mygrade)
+
 
         # 判断题成绩
-        judge_q = models.Paper.objects.filter(id=pid).values('judge_q').values('judge_q__id',
-                                                                                 'judge_q__answer',
+        judge_q = models.Paper.objects.filter(id=pid).values('judge_q').values('judge_q__id', 'judge_q__answer',
                                                                                  'judge_q__score')
         for q in judge_q:
-            qId = str(q['choice_q__id'])  # int 转 string,通过choice_q找到题号
-            myans = request.POST['qId']  # 通过 qid 得到学生关于该题的作答
-            # print(myans)
-            okans = q['choice_q__answer']  # 得到正确答案
-            # print(okans)
+            qid = 'judge' + str(q['judge_q__id'])
+            myans = request.POST[qid]
+            print('myans', myans)
+            okans = q['judge_q__answer']  # 得到正确答案
+            print('okans', okans)
             if myans == okans:  # 判断学生作答与正确答案是否一致
-                mygrade += q['choice_q__score']  # 若一致,得到该题的分数,累加mygrade变量
+                mygrade += q['judge_q__score']  # 若一致,得到该题的分数,累加mygrade变量
 
 
-        # 向Grade表中插入数据
-        models.Grade.objects.create(sid_id=sid, subject=subject1, grade=mygrade)
-        # print(mygrade)
+        # 向Grade表中插入数据          外键
+        models.Grade.objects.create(student_id=sid, subject=subject, grade=mygrade)
+        print(mygrade)
         # 重新渲染index.html模板
-        return render(request, 'index.html', {'student': student, 'paper': paper, 'grade': grade})
+        return render(request, 'stuHome.html', {'student': student, 'paper': paper, 'grade': grade})
