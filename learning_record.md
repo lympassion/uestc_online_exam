@@ -6,30 +6,6 @@
 
 
 
-### 自己的
-
-
-
-![image-20210118170346743](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118170346743.png)
-
-![image-20210118170405697](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118170405697.png)
-
-
-
-![image-20210118170420582](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118170420582.png)
-
-![image-20210118175411420](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118175411420.png)
-
-
-
-### 参考的
-
-![image-20210118175520765](C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20210118175520765.png)
-
-
-
-
-
 #### 1. [django文档](https://docs.djangoproject.com/en/3.0/intro/)
 
 **django的设计模式是MTV，外加url分离器。**
