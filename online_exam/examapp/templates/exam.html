@@ -48,6 +48,7 @@
         <div class="nr_left">
             <div class="test">
                 <form action="{% url 'examapp:calculateScore' %}" method="post">
+                    {% csrf_token %}
                     <input type="hidden" name="sid" value="{{ student.username }}">
                     <input type="hidden" name="pid" value="{{ paper.id }}">
                     <input type="hidden" name="subject" value="{{ subject }}">
@@ -74,32 +75,32 @@
                                 <div class="choice_content_nr_main">
                                     <ul>
                                         <li class="option">
-                                            <input type="radio" class="radioOrCheck" name="choice {{ choice.id }}"
-                                                   value="A"/>
+                                            <input type="radio" class="radioOrCheck" name="choice{{ choice.id }}"
+                                                   value="optA"/>
                                             <label>A.
                                                 <p class="ue" style="display: inline;">{{ choice.optionA }}</p>
                                             </label>
                                         </li>
 
                                         <li class="option">
-                                            <input type="radio" class="radioOrCheck" name="choice {{ choice.id }}"
-                                                   value="B"/>
+                                            <input type="radio" class="radioOrCheck" name="choice{{ choice.id }}"
+                                                   value="optB"/>
                                             <label>
                                                 B.<p class="ue" style="display: inline;">{{ choice.optionB }}</p>
                                             </label>
                                         </li>
 
                                         <li class="option">
-                                            <input type="radio" class="radioOrCheck" name="choice {{ choice.id }}"
-                                                   value="C"/>
+                                            <input type="radio" class="radioOrCheck" name="choice{{ choice.id }}"
+                                                   value="optC"/>
                                             <label>
                                                 C.<p class="ue" style="display: inline;">{{ choice.optionC }}</p>
                                             </label>
                                         </li>
 
                                         <li class="option">
-                                            <input type="radio" class="radioOrCheck" name="choice {{ choice.id }}"
-                                                   value="D"/>
+                                            <input type="radio" class="radioOrCheck" name="choice{{ choice.id }}"
+                                                   value="optD"/>
                                             <label>
                                                 D.<p class="ue" style="display: inline;">{{ choice.optionD }}</p>
                                             </label>
@@ -128,18 +129,18 @@
 
                                 </div>
                             <li class="option">
-                                <input type="radio" class="radioOrCheck" name="judge {{ judge.id }}"
-                                       value="A"/>
+                                <input type="radio" class="radioOrCheck" name="judge{{ judge.id }}"
+                                       value="T"/>
                                 <label>
-                                    正确<p class="ue" style="display: inline;">{{ choice.optionA }}</p>
+                                    正确
                                 </label>
                             </li>
 
                             <li class="option">
-                                <input type="radio" class="radioOrCheck" name="judge {{ judge.id }}"
-                                       value="B"/>
+                                <input type="radio" class="radioOrCheck" name="judge{{ judge.id }}"
+                                       value="F"/>
                                 <label>
-                                    错误<p class="ue" style="display: inline;">{{ choice.optionB }}</p>
+                                    错误
                                 </label>
                             </li>
                             </li>

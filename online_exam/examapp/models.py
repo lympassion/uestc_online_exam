@@ -5,6 +5,7 @@ from django.db import models
 
 # Create your models here.
 SEX = (
+    # value  display name
     ('male', '男'),  # max_length = 4 + 2 = 6
     ('female', '女'),
 )
@@ -50,10 +51,10 @@ class User(AbstractUser):
 # 三种题型：单项选择题、填空题、判断题
 class ChoiceQuestion(models.Model):
     ANSWER = (
-        ('optionA', 'A'),
-        ('optionB', 'B'),
-        ('optionC', 'C'),
-        ('optionD', 'D'),
+        ('optA', 'A'),
+        ('optB', 'B'),
+        ('optC', 'C'),
+        ('optD', 'D'),
     )
     # id = models.AutoField(primary_key=True) 自动加入
     # subject = models.CharField(max_length=20, verbose_name='科目')
@@ -94,8 +95,8 @@ class FillBlankQuestion(models.Model):
 
 class JudgeQuestion(models.Model):
     ANSWER = (
-        ('T', 'True'),
-        ('F', 'False'),
+        ('T', '正确'),
+        ('F', '错误'),
     )
     # subject = models.CharField(max_length=20, verbose_name='科目')
     id = models.IntegerField(primary_key=True, verbose_name='题目编号', default=1)
@@ -119,10 +120,12 @@ def now_plus_1(day=1, hour=0):
 class Paper(models.Model):
     # 与题库为多对多关系
     id = models.IntegerField(primary_key=True, verbose_name='试卷编号', default=1)
+
     choice_q = models.ManyToManyField(ChoiceQuestion, verbose_name='选择题')
     # blank = True----> ManyToManyField optional
-    fill_blank_q = models.ManyToManyField(FillBlankQuestion, verbose_name='填空题', blank=True)
     judge_q = models.ManyToManyField(JudgeQuestion, verbose_name='判断题', blank=True)
+    fill_blank_q = models.ManyToManyField(FillBlankQuestion, verbose_name='填空题', blank=True)
+
     # User作为外键
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='出题人')
     subject = models.CharField(max_length=20, verbose_name='考试科目', default='Python')
