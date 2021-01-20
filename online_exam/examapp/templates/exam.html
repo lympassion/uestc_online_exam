@@ -128,7 +128,7 @@
                                     <font>{{ judge.title }}</font>
 
                                 </div>
-                            <li class="option">
+                            <li class="judge">
                                 <input type="radio" class="radioOrCheck" name="judge{{ judge.id }}"
                                        value="T"/>
                                 <label>
@@ -136,13 +136,43 @@
                                 </label>
                             </li>
 
-                            <li class="option">
+                            <li class="judge">
                                 <input type="radio" class="radioOrCheck" name="judge{{ judge.id }}"
                                        value="F"/>
                                 <label>
                                     错误
                                 </label>
                             </li>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+                    <!--填空题-->
+                    <div class="fill_blank_content">
+                        <div class="fill_blank_content_title">
+                            <h2>填空题</h2>
+                        </div>
+                    </div>
+                    <div class="fill_blank_content_nr">
+                        <ul>
+                            {% for fill_blank in paper.fill_blank_q.all %}
+                            <li id="fill_blank {{ forloop.counter }}">
+                                <div class="fill_blank_content_nr_tt">
+                                    <i>{{ forloop.counter}}</i><span> ({{ fill_blank.score }} 分)</span>
+                                    <font>{{ fill_blank.title }}</font>
+
+                                </div>
+                            <li class="fill_blank">
+                                <div class="form-floating">
+                                    <textarea class="form-control" placeholder="写上你的答案"
+                                              name="fill_blank{{ fill_blank.id }}"
+                                              value="{{ fill_blank.answer}}"
+                                              id="floatingTextarea"></textarea>
+                                </div>
+                            </li>
+
                             </li>
                             {% endfor %}
                         </ul>

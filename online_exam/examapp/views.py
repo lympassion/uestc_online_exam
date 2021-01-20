@@ -109,10 +109,12 @@ def calculate_score(request):
         # 选择题成绩
         # 其中models.Paper.objects.filter(id=pid).values('choice_q')，返回id=pid的试卷中所有的选择题(集合，可迭代)
         choice_q = models.Paper.objects.filter(id=pid).values('choice_q').values('choice_q__id', 'choice_q__answer',
-                                                                                'choice_q__score')
+                                                                                 'choice_q__score')
         for q in choice_q:
             qid = 'choice' + str(q['choice_q__id'])  # 这里一定要与exam.html中对应的name一致
-            myans = request.POST[qid]  # 通过 qid 得到学生关于该题的作答
+            # 直接用 myans = request.POST[qid]，如果该题没有做，就会引发“MultiValueDictKeyError”
+            # myans = request.POST[qid]  # 通过 qid 得到学生关于该题的作答
+            myans = request.POST.get(qid)  # 通过 qid 得到学生关于该题的作答
             # print('myans', myans)
             okans = q['choice_q__answer']  # 得到正确答案
             # print('okans', okans)
@@ -123,16 +125,28 @@ def calculate_score(request):
 
         # 判断题成绩
         judge_q = models.Paper.objects.filter(id=pid).values('judge_q').values('judge_q__id', 'judge_q__answer',
-                                                                                 'judge_q__score')
+                                                                               'judge_q__score')
         for q in judge_q:
             qid = 'judge' + str(q['judge_q__id'])
-            myans = request.POST[qid]
+            myans = request.POST.get(qid)
             print('myans', myans)
             okans = q['judge_q__answer']  # 得到正确答案
             print('okans', okans)
             if myans == okans:  # 判断学生作答与正确答案是否一致
                 mygrade += q['judge_q__score']  # 若一致,得到该题的分数,累加mygrade变量
 
+        # 填空题成绩
+        fill_blank_q = models.Paper.objects.filter(id=pid).values('fill_blank_q').values('fill_blank_q__id',
+                                                                                         'fill_blank_q__answer',
+                                                                                         'fill_blank_q__score')
+        for q in fill_blank_q:
+            qid = 'fill_blank' + str(q['fill_blank_q__id'])
+            myans = request.POST.get(qid)
+            print('myans', myans)
+            okans = q['fill_blank_q__answer']  # 得到正确答案
+            print('okans', okans)
+            if myans == okans:  # 判断学生作答与正确答案是否一致
+                mygrade += q['fill_blank_q__score']  # 若一致,得到该题的分数,累加mygrade变量
 
         # 向Grade表中插入数据          外键
         models.Grade.objects.create(student_id=sid, subject=subject, grade=mygrade)
