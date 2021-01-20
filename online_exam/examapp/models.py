@@ -77,22 +77,6 @@ class ChoiceQuestion(models.Model):
         return '(%s): %s' % (self.id, self.title)
 
 
-class FillBlankQuestion(models.Model):
-    # subject = models.CharField(max_length=20, verbose_name='科目')
-    id = models.IntegerField(primary_key=True, verbose_name='题目编号', default=1)
-    title = models.TextField(verbose_name='题目描述')
-    answer = models.CharField(max_length=200, verbose_name='答案')
-    level = models.CharField(max_length=10, choices=LEVEL, verbose_name='题目难度')
-    score = models.IntegerField(verbose_name='该题分数', default=2)
-
-    def __str__(self):
-        """
-        提供组卷信息
-        :return:
-        """
-        return '(%s): %s' % (self.id, self.title)
-
-
 class JudgeQuestion(models.Model):
     ANSWER = (
         ('T', '正确'),
@@ -104,6 +88,22 @@ class JudgeQuestion(models.Model):
     answer = models.CharField(max_length=20, choices=ANSWER)
     level = models.CharField(max_length=10, choices=LEVEL, verbose_name='题目难度')
     score = models.IntegerField(verbose_name='该题分数', default=1)
+
+    def __str__(self):
+        """
+        提供组卷信息
+        :return:
+        """
+        return '(%s): %s' % (self.id, self.title)
+
+
+class FillBlankQuestion(models.Model):
+    # subject = models.CharField(max_length=20, verbose_name='科目')
+    id = models.IntegerField(primary_key=True, verbose_name='题目编号', default=1)
+    title = models.TextField(verbose_name='题目描述')
+    answer = models.CharField(max_length=200, verbose_name='答案')
+    level = models.CharField(max_length=10, choices=LEVEL, verbose_name='题目难度')
+    score = models.IntegerField(verbose_name='该题分数', default=2)
 
     def __str__(self):
         """
